@@ -36,14 +36,50 @@ mylf <- sierra_amp %>%
   summarise(ramu_count = sum(amphibian_number))
 
 #need to change size, color, ledgend and title
-ggplot(data = mylf, aes(x = year, y = ramu_count)) +
-  geom_point(aes(color = amphibian_life_stage)) +
-  theme_light()
+graph_life <- ggplot(data = mylf, aes(x = year, y = ramu_count)) +
+  geom_bar(stat = "identity", aes(fill = amphibian_life_stage, alpha = .8, width = .4), show.legend = FALSE) +
+  theme_minimal()+
+  facet_wrap(~amphibian_life_stage, scales = "free_y") +
+  labs(x = "",
+       y = "Mountian Yellow-Tree Frogs")
+
+graph_life
 ```
 
 # Graph 2: 5 Lakes Observations
 ```{r}
+
 lakes <- sierra_amp %>% 
+  select(lake_id, amphibian_species, amphibian_life_stage, amphibian_number)%>%
+  filter(amphibian_species == "ramu",
+         amphibian_life_stage %in% c("subadult", "adult")) %>% 
+  group_by(lake_id) %>% 
+  summarise(ramu_count = sum(amphibian_number))
+
+lakes$lake_id <- paste0('Lake ', lakes$lake_id, sep = ' ')
+
+#factor reorder to get largest to smallest number of frogs
+top_5_lakes <- lakes %>% 
+  top_n(5) %>% 
+  mutate(lake_id = fct_reorder(lake_id, ramu_count)) 
+
+#plot frogs from top 5 lakes largest to smallest
+ graph_lakes <- ggplot(data = top_5_lakes, aes(x = lake_id,y = ramu_count)) +
+  geom_bar(stat = "identity", fill = "gold", alpha = .8, width = .4) +
+  theme_minimal() +
+  coord_flip() +
+    labs(x = "",
+         y = "Mountian Yellow-Tree Frogs")
+  graph_lakes
+
+
   
+```
+
+## Part 3: Combine 2 graphs for 1 compound figure
+```{r}
+graph_c <- (graph_life / graph_lakes) 
+
+graph_c
 ```
 
