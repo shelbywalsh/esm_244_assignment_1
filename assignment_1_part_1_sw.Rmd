@@ -1,0 +1,49 @@
+---
+title: "assignment_1: Part 1"
+author: "Shelby Walsh"
+date: "1/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(readxl)
+library(ggplot2)
+library(patchwork)
+library(lubridate)
+```
+
+## Sierra Amphibian Analysis
+```{r}
+#read in xlsx data and clean
+sierra_amp <- read_excel("sierra_amphibians.xlsx") %>% 
+  clean_names() %>% 
+  mutate(across(where(is.character), tolower)) 
+```
+
+# Graph 1: mountain yellow-legged frog (Rana muscosa)
+```{r}
+#modify table to get counts for mountain yellow-legged frog per year grouped by life stage (excluding eggmass)
+mylf <- sierra_amp %>% 
+  mutate(year = year(survey_date)) %>% 
+  select(amphibian_species, amphibian_life_stage, amphibian_number, year) %>% 
+  filter(amphibian_species == "ramu",
+         amphibian_life_stage %in% c("tadpole", "subadult", "adult")) %>% 
+  group_by(year, amphibian_life_stage) %>% 
+  summarise(ramu_count = sum(amphibian_number))
+
+#need to change size, color, ledgend and title
+ggplot(data = mylf, aes(x = year, y = ramu_count)) +
+  geom_point(aes(color = amphibian_life_stage)) +
+  theme_light()
+```
+
+# Graph 2: 5 Lakes Observations
+```{r}
+lakes <- sierra_amp %>% 
+  
+```
+
