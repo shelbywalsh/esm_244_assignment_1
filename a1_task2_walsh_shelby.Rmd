@@ -1,0 +1,48 @@
+---
+title: "a1_task2_walsh_shelby"
+author: "Shelby Walsh"
+date: "1/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(ggfortify)
+library(readxl)
+library(gghighlight)
+library(lubridate)
+library(plotly)
+library(patchwork)
+```
+
+```{r}
+world_env <- read_csv("world_env_vars.csv") %>% 
+  clean_names() 
+
+world_env_pca <- world_env %>% 
+  select(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual) %>% 
+  drop_na() %>% 
+  scale() %>% 
+  prcomp()
+
+world_env_u <- world_env %>% 
+  drop_na(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual)
+
+world_env_pca$rotation
+
+autoplot(world_env_pca,
+         data = world_env_u,
+         loadings = TRUE,
+         colour = 'country',
+         loadings.label = TRUE,
+         loadings.colour = "black",
+         loadings.label.colour = "black",
+         loadings.label.vjust = -0.5
+         ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
