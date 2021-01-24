@@ -35,14 +35,17 @@ world_env_pca$rotation
 
 autoplot(world_env_pca,
          data = world_env_u,
+         #shape = FALSE,
          loadings = TRUE,
          colour = 'country',
          loadings.label = TRUE,
          loadings.colour = "black",
          loadings.label.colour = "black",
-         loadings.label.vjust = -0.5
+         loadings.label.vjust = -1.1,
+         loadings.label.hjust = 0.8,
+         loadings.label.size  = 4
          ) +
   theme_minimal() +
   theme(legend.position = "none")
-```
 
+```
