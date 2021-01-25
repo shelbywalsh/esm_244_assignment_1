@@ -5,8 +5,9 @@ date: "1/22/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=TRUE, message = FALSE, warning = FALSE, echo = TRUE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
 library(tidyverse)
 library(janitor)
 library(here)
@@ -23,8 +24,8 @@ world_env <- read_csv("world_env_vars.csv") %>%
   clean_names() 
 
 world_env_pca <- world_env %>% 
-  select(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual) %>% 
-  rename(Accessibility.to.Cities = accessibility_to_cities,
+  select(cropland_cover, tree_canopy_cover, temp_mean_annual, rain_mean_annual) %>% 
+  rename(Annual.Mean.Rain = rain_mean_annual,
         Cropland.Cover = cropland_cover,
          Tree.Canopy.Cover = tree_canopy_cover ,
          Annual.Mean.Temp = temp_mean_annual ) %>% 
@@ -41,22 +42,32 @@ world_env_u <- world_env %>%
 
 world_env_pca$rotation
 
-autoplot(world_env_pca,
+world_pca_plot <- autoplot(world_env_pca,
          data = world_env_u,
          #shape = FALSE,
          loadings = TRUE,
-         colour = 'country',
+         colour = "lightpink2",
          loadings.label = TRUE,
          loadings.colour = "black",
          loadings.label.colour = "black",
-         loadings.label.vjust = -1.1,
-         loadings.label.hjust = 0.8,
+         loadings.label.vjust = -1,
+         loadings.label.hjust = 1.1,
          loadings.label.size  = 4,
          loadings.label.face = "bold"
          ) +
   theme_minimal() +
-  theme(legend.position = "none") +
-  labs(caption = "Figure 1. PCA biplot comparing the relationships between Cropland cover, tree canopy \ncover, access to cities and annual mean temperature around the world.") +
-  theme(plot.caption = element_text(hjust = 0, size = 10, face = "bold"))
+  theme(legend.position = "none")
+
 
 ```
+```{r, fig.cap= "**Figure 1. PCA biplot comparing the relationships between Cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall around the world.** "}
+
+world_pca_plot
+
+```
+
+## Global PCA Biplot Findings
+
++ Cropland cover is negatively correlated with Annual mean temperature
++ Tree Canopy Cover and Annual Mean Temperature are highly positively correlated
++ Annual mean rainfall and tree canopy cover have little correlation to cropland cover and annual mean temperatures.
