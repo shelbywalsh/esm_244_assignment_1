@@ -34,11 +34,8 @@ world_env_pca <- world_env %>%
   prcomp()
 
 world_env_u <- world_env %>% 
-  drop_na(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual) %>% 
-  rename(Accessibility.to.Cities = accessibility_to_cities,
-        Cropland.Cover = cropland_cover,
-         Tree.Canopy.Cover = tree_canopy_cover ,
-         Annual.Mean.Temp = temp_mean_annual )
+  drop_na(cropland_cover, tree_canopy_cover, temp_mean_annual, rain_mean_annual) %>% 
+  rename()
 
 world_env_pca$rotation
 
@@ -50,8 +47,8 @@ world_pca_plot <- autoplot(world_env_pca,
          loadings.label = TRUE,
          loadings.colour = "black",
          loadings.label.colour = "black",
-         loadings.label.vjust = -1,
-         loadings.label.hjust = 1.1,
+         loadings.label.vjust = -0.3,
+         loadings.label.hjust = 1.15,
          loadings.label.size  = 4,
          loadings.label.face = "bold"
          ) +
