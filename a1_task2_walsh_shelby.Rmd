@@ -19,9 +19,21 @@ library(plotly)
 library(patchwork)
 ```
 
+# Looking at different planetary relationships
+
+In this analysis, I will be using data from Google Earth Engine to look at the relationships between different environmental factors. The goal is to use Principle Component Analysis (PCA) to find if different factors are correlated, and if so, in what way. The variables I will be looking at are cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall. Cropland cover is measured by the percent of a country's land that is covered by cropland; tree canopy cover is the percentage of land covered by trees greater that 5 meters tall; annual mean temperature is the average annual temperature in degree Celcius; annual mean rainfall is the average mean rainfall in millimeters(mm). 
+
+#### Data sourced from Google Earth Engine: https://earthengine.google.com/
+
+#### Citation: Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. Remote Sensing of Environment.
+
+
 ```{r}
+# read in and clean Earth Engine data
 world_env <- read_csv("world_env_vars.csv") %>% 
   clean_names() 
+
+# Look at the relationships between cropland cover, tree canopy cover, annual mean temp and annual mean rainfall. Rename cariable to look nicer in the PCA biplot
 
 world_env_pca <- world_env %>% 
   select(cropland_cover, tree_canopy_cover, temp_mean_annual, rain_mean_annual) %>% 
@@ -33,12 +45,14 @@ world_env_pca <- world_env %>%
   scale() %>% 
   prcomp()
 
+# Drop na's for variable in the PCA analysis
 world_env_u <- world_env %>% 
-  drop_na(cropland_cover, tree_canopy_cover, temp_mean_annual, rain_mean_annual) %>% 
-  rename()
+  drop_na(cropland_cover, tree_canopy_cover, temp_mean_annual, rain_mean_annual) 
 
+# Look at the rotations of each variable compared to the other 3 varibles
 world_env_pca$rotation
 
+# Plot biplot so that arrows and labels are legible. Since we are looking at the world as a whole, do not colour code by country (trends weren't present)
 world_pca_plot <- autoplot(world_env_pca,
          data = world_env_u,
          #shape = FALSE,
@@ -57,6 +71,7 @@ world_pca_plot <- autoplot(world_env_pca,
 
 
 ```
+
 ```{r, fig.cap= "**Figure 1. PCA biplot comparing the relationships between Cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall around the world.** "}
 
 world_pca_plot
@@ -65,6 +80,6 @@ world_pca_plot
 
 ## Global PCA Biplot Findings
 
-+ Cropland cover is negatively correlated with Annual mean temperature
++ Cropland cover is negatively correlated with annual mean temperature
 + Tree Canopy Cover and Annual Mean Temperature are highly positively correlated
 + Annual mean rainfall and tree canopy cover have little correlation to cropland cover and annual mean temperatures.
