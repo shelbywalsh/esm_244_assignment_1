@@ -5,6 +5,15 @@ date: "1/22/2021"
 output: html_document
 ---
 
+# Looking at different planetary relationships
+
+In this analysis, I will be using data from Google Earth Engine to look at the relationships between different environmental factors. The goal is to use Principle Component Analysis (PCA) to find if different factors are correlated, and if so, in what way. The variables I will be looking at are cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall. Cropland cover is measured by the percent of a country's land that is covered by cropland; tree canopy cover is the percentage of land covered by trees greater that 5 meters tall; annual mean temperature is the average annual temperature in degree Celcius; annual mean rainfall is the average mean rainfall in millimeters(mm). 
+
+#### Data sourced from Google Earth Engine: https://earthengine.google.com/
+
+#### Citation: Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. Remote Sensing of Environment.
+
+
 ```{r setup, include=TRUE, message = FALSE, warning = FALSE, echo = TRUE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
@@ -18,14 +27,6 @@ library(lubridate)
 library(plotly)
 library(patchwork)
 ```
-
-# Looking at different planetary relationships
-
-In this analysis, I will be using data from Google Earth Engine to look at the relationships between different environmental factors. The goal is to use Principle Component Analysis (PCA) to find if different factors are correlated, and if so, in what way. The variables I will be looking at are cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall. Cropland cover is measured by the percent of a country's land that is covered by cropland; tree canopy cover is the percentage of land covered by trees greater that 5 meters tall; annual mean temperature is the average annual temperature in degree Celcius; annual mean rainfall is the average mean rainfall in millimeters(mm). 
-
-#### Data sourced from Google Earth Engine: https://earthengine.google.com/
-
-#### Citation: Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. Remote Sensing of Environment.
 
 
 ```{r}
@@ -72,7 +73,7 @@ world_pca_plot <- autoplot(world_env_pca,
 
 ```
 
-```{r, fig.cap= "**Figure 1. PCA biplot comparing the relationships between Cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall around the world.** "}
+```{r, fig.cap= "**Figure 1.** PCA biplot comparing the relationships between Cropland cover, tree canopy cover, annual mean temperature and annual mean rainfall around the world. (77% of variablity of the data is catpture within these parameters.)"}
 
 world_pca_plot
 
@@ -80,6 +81,10 @@ world_pca_plot
 
 ## Global PCA Biplot Findings
 
-+ Cropland cover is negatively correlated with annual mean temperature
-+ Tree Canopy Cover and Annual Mean Temperature are highly positively correlated
-+ Annual mean rainfall and tree canopy cover have little correlation to cropland cover and annual mean temperatures.
+
++ **Cropland cover is negatively correlated with annual mean temperature**
+  * This was somewhat surprising since I would not associate extreme low temperatures with high cropland cover. However, it makes sense when thinking about dessert and extremely high temperatures not having the ability to sustain much cropland. 
++ **Tree Canopy Cover and Annual Mean Rainfall are highly positively correlated**
+  * This matches my prediction that areas with higher rainfall would have higher tree canopy cover, as both temperate and tropical rainforests are located in areas with high rainfall.
++ **Annual mean rainfall and tree canopy cover are not correlated to cropland cover or annual mean temperature**
+  * This was surprising as I thought annual mean temperature and annual mean rainfall  might have some positive correlation. I also thought that tree canopy cover and cropland cover would be negatively correlated as they are opposite forms of land cover.
