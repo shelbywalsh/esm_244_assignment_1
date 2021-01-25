@@ -24,12 +24,20 @@ world_env <- read_csv("world_env_vars.csv") %>%
 
 world_env_pca <- world_env %>% 
   select(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual) %>% 
+  rename(Accessibility.to.Cities = accessibility_to_cities,
+        Cropland.Cover = cropland_cover,
+         Tree.Canopy.Cover = tree_canopy_cover ,
+         Annual.Mean.Temp = temp_mean_annual ) %>% 
   drop_na() %>% 
   scale() %>% 
   prcomp()
 
 world_env_u <- world_env %>% 
-  drop_na(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual)
+  drop_na(accessibility_to_cities, cropland_cover, tree_canopy_cover, temp_mean_annual) %>% 
+  rename(Accessibility.to.Cities = accessibility_to_cities,
+        Cropland.Cover = cropland_cover,
+         Tree.Canopy.Cover = tree_canopy_cover ,
+         Annual.Mean.Temp = temp_mean_annual )
 
 world_env_pca$rotation
 
@@ -43,9 +51,12 @@ autoplot(world_env_pca,
          loadings.label.colour = "black",
          loadings.label.vjust = -1.1,
          loadings.label.hjust = 0.8,
-         loadings.label.size  = 4
+         loadings.label.size  = 4,
+         loadings.label.face = "bold"
          ) +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(caption = "Figure 1. PCA biplot comparing the relationships between Cropland cover, tree canopy \ncover, access to cities and annual mean temperature around the world.") +
+  theme(plot.caption = element_text(hjust = 0, size = 10, face = "bold"))
 
 ```

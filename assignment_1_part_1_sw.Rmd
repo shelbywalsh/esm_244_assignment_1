@@ -18,14 +18,15 @@ library(lubridate)
 
 ## Sierra Amphibian Analysis
 ```{r}
-#read in xlsx data and clean
+#read in xlsx data and clean coulmn names and species names
 sierra_amp <- read_excel("sierra_amphibians.xlsx") %>% 
   clean_names() %>% 
   mutate(across(where(is.character), tolower)) 
 ```
 
-# Graph 1: mountain yellow-legged frog (Rana muscosa)
+
 ```{r}
+#Graph 1: Mountain yellow-legged frog counts based on life stage and year
 #modify table to get counts for mountain yellow-legged frog per year grouped by life stage (excluding eggmass)
 mylf <- sierra_amp %>% 
   mutate(year = year(survey_date)) %>% 
@@ -35,9 +36,11 @@ mylf <- sierra_amp %>%
   group_by(year, amphibian_life_stage) %>% 
   summarise(ramu_count = sum(amphibian_number))
 
+
+#create lables for facet wrap graph titles
 lables <- c(adult = "Adult", subadult = "Subadult", tadpole = "Tadpole")
 
-#need to change size, color, ledgend and title
+#create 3 facet wrapped graphs so each life stage is graphed seperately, with a free frog count scale (y scale)
 graph_life <- ggplot(data = mylf, aes(x = year, y = ramu_count)) +
   geom_bar(stat = "identity", aes(fill = amphibian_life_stage, alpha = 1, width = .4), show.legend = FALSE) +
   scale_fill_brewer(palette = "YlOrRd") +
@@ -45,7 +48,7 @@ graph_life <- ggplot(data = mylf, aes(x = year, y = ramu_count)) +
   facet_wrap(~amphibian_life_stage, scales = "free_y", 
              labeller = labeller(amphibian_life_stage = lables))+      
   labs(x = "",
-       y = "Frog Count per Year",
+       y = "Frogs Observed",
          title = "A") +
    theme(plot.title = element_text(size = 10,
                                    face = "bold",
@@ -56,9 +59,9 @@ graph_life <- ggplot(data = mylf, aes(x = year, y = ramu_count)) +
 
 ```
 
-# Graph 2: 5 Lakes Observations
-```{r}
 
+```{r}
+# Graph 2: Mountain yellow-legged frog counts per lake from 1995-2002 in life stages subadult and adult
 lakes <- sierra_amp %>% 
   select(lake_id, amphibian_species, amphibian_life_stage, amphibian_number)%>%
   filter(amphibian_species == "ramu",
@@ -68,18 +71,18 @@ lakes <- sierra_amp %>%
 
 lakes$lake_id <- paste0('Lake ', lakes$lake_id, sep = ' ')
 
-#factor reorder to get largest to smallest number of frogs
+#factor reorder to get largest to smallest number of frogs, only keep the top 5 lakes
 top_5_lakes <- lakes %>% 
   top_n(5) %>% 
   mutate(lake_id = fct_reorder(lake_id, ramu_count)) 
 
-#plot frogs from top 5 lakes largest to smallest
+#plot frogs from top 5 lakes largest to smallest, flip coords so when graphs combine, easier to read all 4 
  graph_lakes <- ggplot(data = top_5_lakes, aes(x = lake_id,y = ramu_count)) +
   geom_bar(stat = "identity", fill = "gold", alpha = .8, width = .4) +
   theme_minimal() +
   coord_flip() +
     labs(x = "",
-         y = "Frog Count per Lake",
+         y = "Frogs Observed",
          title = "B") +
    theme(plot.title = element_text(size = 10,
                                   face = "bold",
@@ -89,14 +92,14 @@ top_5_lakes <- lakes %>%
 
 ```
 
-## Part 3: Combine 2 graphs for 1 compound figure
-```{r}
-graph_c <- (graph_life / graph_lakes) +
-    labs(x = "",
-       y = "",
-       caption = "Figure 1. Mountain Yellow-legged Frog (RAMU) observations in the southern Sierra Nevadas from 1995-2002. ") +
-  theme(plot.caption = element_text(hjust = 0, size = 8, face = "bold"))
 
+```{r}
+# Graph 3: combine both graphs to have 1 common figure to show mountain yellow-legged frog counts in different ways
+graph_c <- (graph_life / graph_lakes) 
+
+```
+
+```{r, fig.cap= "**Figure 1. Mountain Yellow-legged Frog (RAMU) observations in the southern Sierra Nevadas from 1995-2002.** (**A**) Yearly observations of mountain yellow-legged frogs from 1995-2002 broken down by different life stage, (Adult, Subadult, Tadpole), excluding eggmmass stage. (**B**) Total frogs observed from 1995-2002 in the 5 lakes with the highest populations."}
 graph_c
 ```
 
